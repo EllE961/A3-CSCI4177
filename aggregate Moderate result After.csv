@@ -1,0 +1,9 @@
+Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Sent KB/sec
+GET / (Homepage) [Moderate],50,57,62,77,78,80,26,80,0.000%,.84914,38.40,0.36
+GET /_next/static/chunks/main-app.js?v=1753632672877 [Moderate],50,15,15,19,20,36,11,36,0.000%,.84962,4999.90,0.40
+List Products ?page=1&limit=20 [Moderate],50,13,6,9,15,251,4,251,0.000%,.84973,4.96,0.38
+Get Product Details 68853bf7debc89ff229629cc [Moderate],50,256,251,256,282,396,249,396,0.000%,.84969,0.91,0.39
+Get Current Cart [Moderate],50,260,256,270,301,325,250,325,0.000%,.84960,0.59,0.37
+Add Item to Cart (POST /api/cart/items) [Moderate],50,761,759,766,777,844,748,844,0.000%,.84240,0.41,0.43
+Get Cart Totals [Moderate],50,256,256,258,260,301,250,301,0.000%,.84952,0.33,0.37
+TOTAL,350,231,251,751,761,777,4,844,0.000%,5.38710,4570.25,2.46

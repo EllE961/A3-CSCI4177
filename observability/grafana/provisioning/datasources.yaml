@@ -1,0 +1,39 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: 15s
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: true
+
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger:16686
+    editable: true
+
+  - name: MongoDB-Auth
+    type: mongodb-datasource
+    url: mongodb://mongodb:27017
+    database: shopsphere-auth
+    editable: true
+    jsonData:
+      authDatabase: admin
+
+  - name: MongoDB-Products
+    type: mongodb-datasource
+    url: mongodb://mongodb:27017
+    database: shopsphere-products
+    editable: true
+    jsonData:
+      authDatabase: admin

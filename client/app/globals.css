@@ -1,0 +1,301 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ShopSphere Light Mode - Clean & Modern */
+    --background: 220 14% 98%; /* gray-50 #f9fafb */
+    --foreground: 220 9% 9%; /* gray-900 #111827 */
+    --card: 0 0% 100%; /* white #ffffff */
+    --card-foreground: 220 9% 9%; /* gray-900 #111827 */
+    --popover: 0 0% 100%; /* white #ffffff */
+    --popover-foreground: 220 9% 9%; /* gray-900 #111827 */
+    --primary: 170 76% 29%; /* teal-600 #0d9488 */
+    --primary-foreground: 0 0% 100%; /* white #ffffff */
+    --secondary: 220 14% 96%; /* gray-100 #f3f4f6 */
+    --secondary-foreground: 220 9% 9%; /* gray-900 #111827 */
+    --muted: 220 13% 91%; /* gray-200 #e5e7eb */
+    --muted-foreground: 220 9% 31%; /* gray-600 #4b5563 */
+    --accent: 170 76% 35%; /* teal-500 #14b8a6 */
+    --accent-foreground: 0 0% 100%; /* white #ffffff */
+    --destructive: 0 74% 42%; /* red-600 #dc2626 */
+    --destructive-foreground: 0 0% 100%; /* white #ffffff */
+    --success: 142 71% 30%; /* green-600 #16a34a */
+    --success-foreground: 0 0% 100%; /* white #ffffff */
+    --warning: 43 96% 56%; /* amber-500 #f59e0b */
+    --warning-foreground: 26 83% 14%; /* amber-900 #451a03 */
+    --border: 220 13% 91%; /* gray-200 #e5e7eb */
+    --input: 220 13% 91%; /* gray-200 #e5e7eb */
+    --ring: 170 76% 29%; /* teal-600 #0d9488 */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* ShopSphere Dark Mode - Sleek & Professional */
+    --background: 222 84% 5%; /* slate-900 #0f172a */
+    --foreground: 220 14% 98%; /* gray-50 #f9fafb */
+    --card: 215 28% 17%; /* slate-800 #1e293b */
+    --card-foreground: 220 14% 98%; /* gray-50 #f9fafb */
+    --popover: 215 28% 17%; /* slate-800 #1e293b */
+    --popover-foreground: 220 14% 98%; /* gray-50 #f9fafb */
+    --primary: 166 76% 80%; /* teal-400 #5eead4 */
+    --primary-foreground: 222 84% 5%; /* slate-900 #0f172a */
+    --secondary: 215 25% 27%; /* slate-700 #334155 */
+    --secondary-foreground: 220 14% 98%; /* gray-50 #f9fafb */
+    --muted: 215 25% 27%; /* slate-700 #334155 */
+    --muted-foreground: 215 20% 65%; /* slate-400 #94a3b8 */
+    --accent: 166 76% 67%; /* teal-300 #2dd4bf */
+    --accent-foreground: 222 84% 5%; /* slate-900 #0f172a */
+    --destructive: 0 72% 71%; /* red-400 #f87171 */
+    --destructive-foreground: 222 84% 5%; /* slate-900 #0f172a */
+    --success: 142 69% 58%; /* green-400 #4ade80 */
+    --success-foreground: 222 84% 5%; /* slate-900 #0f172a */
+    --warning: 43 96% 56%; /* amber-400 #fbbf24 */
+    --warning-foreground: 222 84% 5%; /* slate-900 #0f172a */
+    --border: 215 25% 27%; /* slate-700 #334155 */
+    --input: 215 25% 27%; /* slate-700 #334155 */
+    --ring: 166 76% 80%; /* teal-400 #5eead4 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  /* Ensure stable layouts across all zoom levels */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
+  
+  /* Standard responsive breakpoints with centered content */
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container {
+      max-width: 768px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1024px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+    }
+  }
+  
+  @media (min-width: 1536px) {
+    .container {
+      max-width: 1400px;
+    }
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Enhanced gradient background that always covers full viewport */
+  .animated-gradient-background {
+    background: linear-gradient(-45deg, #0d9488, #14b8a6, #06b6d4, #3b82f6);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    width: 100vw;
+    height: 100%;
+    min-height: inherit;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .text-shadow {
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  .text-shadow-sm {
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Enhanced button styling for better contrast */
+  .btn-hero-primary {
+    @apply bg-white text-slate-900 hover:bg-white/90 hover:text-slate-900 shadow-lg font-semibold border-0 transition-all duration-300;
+  }
+
+  .btn-hero-secondary {
+    @apply bg-transparent text-white border-2 border-white hover:bg-white hover:text-slate-900 focus:bg-white focus:text-slate-900 shadow-lg font-semibold backdrop-blur-sm transition-all duration-300;
+  }
+
+  /* Ensure buttons maintain contrast in all themes */
+  .btn-theme-safe {
+    @apply transition-all duration-300 focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+  }
+
+  /* Override any conflicting button styles for hero section */
+  .hero-button-override {
+    background-color: transparent !important;
+    color: white !important;
+    border: 2px solid white !important;
+  }
+
+  .hero-button-override:hover {
+    background-color: white !important;
+    color: rgb(15 23 42) !important; /* slate-900 */
+    border-color: white !important;
+  }
+
+  /* Layout stabilization for all zoom levels */
+  .section-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .section-content {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: clamp(1rem, 4vw, 2rem);
+    padding-right: clamp(1rem, 4vw, 2rem);
+  }
+
+  /* Ensure content always stays centered */
+  .content-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Grid layouts that maintain center alignment */
+  .stable-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    justify-items: center;
+    align-items: start;
+  }
+
+  /* Responsive typography that scales properly */
+  .responsive-text {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    line-height: 1.6;
+  }
+
+  .responsive-heading {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    line-height: 1.2;
+  }
+
+  /* Fix flex items from going left */
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .flex-center-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Prevent layout shifts on zoom */
+  .zoom-stable {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure footer always stays at bottom and centered */
+  .footer-stable {
+    margin-top: auto;
+    width: 100%;
+    flex-shrink: 0;
+  }
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .animated-gradient-background {
+    background-size: 300% 300%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animated-gradient-background {
+    animation: none;
+  }
+}

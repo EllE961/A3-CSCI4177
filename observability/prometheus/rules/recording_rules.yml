@@ -1,0 +1,156 @@
+groups:
+  - name: shopsphere_recording_rules
+    interval: 30s
+    rules:
+      # HTTP metrics
+      - record: service:http_requests:rate5m
+        expr: |
+          sum by (service, method, status) (
+            rate(http_requests_total[5m])
+          )
+
+      - record: service:http_request_duration:p50
+        expr: |
+          histogram_quantile(0.5,
+            sum by (service, le) (
+              rate(http_request_duration_seconds_bucket[5m])
+            )
+          )
+
+      - record: service:http_request_duration:p95
+        expr: |
+          histogram_quantile(0.95,
+            sum by (service, le) (
+              rate(http_request_duration_seconds_bucket[5m])
+            )
+          )
+
+      - record: service:http_request_duration:p99
+        expr: |
+          histogram_quantile(0.99,
+            sum by (service, le) (
+              rate(http_request_duration_seconds_bucket[5m])
+            )
+          )
+
+      - record: service:http_error_rate
+        expr: |
+          sum by (service) (rate(http_requests_total{status=~"5.."}[5m]))
+          /
+          sum by (service) (rate(http_requests_total[5m]))
+
+      # Service availability
+      - record: service:up
+        expr: |
+          avg by (service) (up{job=~".*-service|gateway"})
+
+      # Resource usage
+      - record: instance:node_cpu:rate5m
+        expr: |
+          100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      - record: instance:node_memory_usage:percentage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+
+      - record: instance:node_filesystem_usage:percentage
+        expr: |
+          100 - (
+            node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} 
+            / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"} * 100
+          )
+
+      # Container metrics
+      - record: container:memory_usage:bytes
+        expr: |
+          sum by (name, container_label_com_docker_compose_service) (
+            container_memory_usage_bytes{name!=""}
+          )
+
+      - record: container:cpu_usage:rate5m
+        expr: |
+          sum by (name, container_label_com_docker_compose_service) (
+            rate(container_cpu_usage_seconds_total{name!=""}[5m])
+          ) * 100
+
+      - record: container:network_receive:rate5m
+        expr: |
+          sum by (name, container_label_com_docker_compose_service) (
+            rate(container_network_receive_bytes_total{name!=""}[5m])
+          )
+
+      - record: container:network_transmit:rate5m
+        expr: |
+          sum by (name, container_label_com_docker_compose_service) (
+            rate(container_network_transmit_bytes_total{name!=""}[5m])
+          )
+
+      # Business metrics
+      - record: shopsphere:orders:rate1h
+        expr: |
+          sum(increase(order_created_total[1h]))
+
+      - record: shopsphere:revenue:rate1h
+        expr: |
+          sum(increase(order_revenue_total[1h]))
+
+      - record: shopsphere:carts:active
+        expr: |
+          sum(cart_active_total)
+
+      - record: shopsphere:users:active:5m
+        expr: |
+          count(increase(user_activity_total[5m]) > 0)
+
+      - record: shopsphere:products:views:rate1h
+        expr: |
+          sum by (product_id) (
+            increase(product_view_total[1h])
+          )
+
+      - record: shopsphere:checkout:conversion_rate
+        expr: |
+          sum(increase(checkout_completed_total[1h]))
+          /
+          sum(increase(checkout_started_total[1h]))
+
+      # Payment metrics
+      - record: payment:success_rate
+        expr: |
+          sum(rate(payment_processed_total{status="success"}[5m]))
+          /
+          sum(rate(payment_processed_total[5m]))
+
+      - record: payment:processing_duration:p95
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (
+              rate(payment_processing_duration_seconds_bucket[5m])
+            )
+          )
+
+      # Auth metrics
+      - record: auth:login:rate5m
+        expr: |
+          sum(rate(auth_login_attempts_total[5m]))
+
+      - record: auth:registration:rate1h
+        expr: |
+          sum(increase(user_registration_total[1h]))
+
+      # Database connection pool metrics
+      - record: db:connections:active
+        expr: |
+          sum by (service, db) (db_connections_active)
+
+      - record: db:connections:idle
+        expr: |
+          sum by (service, db) (db_connections_idle)
+
+      - record: db:query_duration:p95
+        expr: |
+          histogram_quantile(0.95,
+            sum by (service, operation, le) (
+              rate(db_query_duration_seconds_bucket[5m])
+            )
+          )

@@ -1,0 +1,137 @@
+http:
+  port: 8080 
+
+admin:
+  port: 9876
+  host: localhost
+
+apiEndpoints:
+  auth:
+    pathRegex: "/api/auth.*" 
+    host: "*"
+  user:
+    pathRegex: "/api/user.*" 
+    host: "*"
+  product:
+    pathRegex: "/api/product.*" 
+    host: "*"
+  cart:
+    pathRegex: "/api/cart.*" 
+    host: "*"  
+  order:
+    pathRegex: "/api/order.*" 
+    host: "*"
+  payment:
+    pathRegex: "/api/payment.*" 
+    host: "*"
+  analytics:
+    pathRegex: "/api/analytics.*" 
+    host: "*"
+
+serviceEndpoints:
+  auth-service:
+    url: http://auth-service:4100/ 
+  user-service:
+    url: http://user-service:4200/ 
+  product-service:
+    url: http://product-service:4300/ 
+  cart-service:
+    url: http://cart-service:4400/
+  payment-service:
+    url: http://payment-service:4500/
+  order-service:
+    url: http://order-service:4600/
+  analytics-service:
+    url: http://analytics-service:4700/
+
+
+policies:
+  - cors
+  - proxy
+
+pipelines:
+  auth-pipeline:
+    apiEndpoints:
+      - auth
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"
+      - proxy:
+          - action:
+              serviceEndpoint: auth-service
+              changeOrigin: true
+  user-pipeline:
+    apiEndpoints:
+      - user
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"
+      - proxy:
+          - action:
+              serviceEndpoint: user-service
+              changeOrigin: true
+  product-pipeline:
+    apiEndpoints:
+      - product
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"
+      - proxy:
+          - action:
+              serviceEndpoint: product-service
+              changeOrigin: true
+  cart-pipeline:
+    apiEndpoints:
+      - cart
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"
+      - proxy:
+          - action:
+              serviceEndpoint: cart-service
+              changeOrigin: true
+  order-pipeline:
+    apiEndpoints:
+      - order
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"  
+      - proxy:
+          - action:
+              serviceEndpoint: order-service
+              changeOrigin: true
+  payment-pipeline:
+    apiEndpoints:
+      - payment
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"  
+      - proxy:
+          - action:
+              serviceEndpoint: payment-service
+              changeOrigin: true
+  analytics-pipeline:
+    apiEndpoints:
+      - analytics
+    policies:
+      - cors:
+          - action:
+              origin: "*"
+              methods: "GET,POST,PUT,DELETE"  
+      - proxy:
+          - action:
+              serviceEndpoint: analytics-service
+              changeOrigin: true
+  

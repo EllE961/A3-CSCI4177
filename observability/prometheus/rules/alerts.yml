@@ -1,0 +1,196 @@
+groups:
+  - name: shopsphere_alerts
+    interval: 30s
+    rules:
+      # Service availability alerts
+      - alert: ServiceDown
+        expr: up{job=~".*-service|gateway"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been down for more than 2 minutes."
+
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) by (service)
+            /
+            sum(rate(http_requests_total[5m])) by (service)
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          team: development
+        annotations:
+          summary: "High error rate on {{ $labels.service }}"
+          description: "{{ $labels.service }} has error rate above 5% (current: {{ $value | humanizePercentage }})"
+
+      # Performance alerts
+      - alert: HighResponseTime
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_seconds_bucket[5m])) by (service, le)
+          ) > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: development
+        annotations:
+          summary: "High response time on {{ $labels.service }}"
+          description: "95th percentile response time is above 1s (current: {{ $value | humanizeDuration }})"
+
+      - alert: HighCPUUsage
+        expr: |
+          (
+            100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+          ) > 80
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% (current: {{ $value | humanize }}%)"
+
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)
+          ) * 100 > 85
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% (current: {{ $value | humanize }}%)"
+
+      # Container alerts
+      - alert: ContainerRestarting
+        expr: |
+          increase(container_restart_count[15m]) > 3
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Container {{ $labels.name }} is restarting frequently"
+          description: "Container has restarted {{ $value }} times in the last 15 minutes"
+
+      - alert: ContainerOOMKilled
+        expr: |
+          increase(container_oom_events_total[5m]) > 0
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Container {{ $labels.name }} was OOM killed"
+          description: "Container was killed due to out of memory"
+
+      # Database alerts
+      - alert: MongoDBDown
+        expr: mongodb_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: database
+        annotations:
+          summary: "MongoDB is down"
+          description: "MongoDB has been down for more than 2 minutes"
+
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: database
+        annotations:
+          summary: "Redis is down"
+          description: "Redis has been down for more than 2 minutes"
+
+      # Disk space alerts
+      - alert: DiskSpaceLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} 
+            / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"} * 100
+          ) < 10
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 10% (current: {{ $value | humanize }}%)"
+
+      # Payment service specific alerts
+      - alert: PaymentProcessingFailure
+        expr: |
+          increase(payment_processing_errors_total[5m]) > 5
+        labels:
+          severity: critical
+          team: payments
+        annotations:
+          summary: "Payment processing failures detected"
+          description: "{{ $value }} payment processing errors in the last 5 minutes"
+
+      - alert: StripeAPIErrors
+        expr: |
+          increase(stripe_api_errors_total[5m]) > 3
+        labels:
+          severity: warning
+          team: payments
+        annotations:
+          summary: "Stripe API errors detected"
+          description: "{{ $value }} Stripe API errors in the last 5 minutes"
+
+      # Cart service alerts
+      - alert: AbandonedCartsHigh
+        expr: |
+          increase(cart_abandoned_total[1h]) > 100
+        labels:
+          severity: info
+          team: product
+        annotations:
+          summary: "High number of abandoned carts"
+          description: "{{ $value }} carts abandoned in the last hour"
+
+      # Order service alerts  
+      - alert: OrderProcessingBacklog
+        expr: |
+          order_processing_queue_size > 50
+        for: 10m
+        labels:
+          severity: warning
+          team: fulfillment
+        annotations:
+          summary: "Order processing backlog detected"
+          description: "{{ $value }} orders waiting to be processed"
+
+      # Auth service alerts
+      - alert: HighLoginFailureRate
+        expr: |
+          (
+            sum(rate(auth_login_failures_total[5m]))
+            /
+            sum(rate(auth_login_attempts_total[5m]))
+          ) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: security
+        annotations:
+          summary: "High login failure rate"
+          description: "Login failure rate is above 10% (current: {{ $value | humanizePercentage }})"
+
+      - alert: SuspiciousLoginActivity
+        expr: |
+          increase(auth_suspicious_login_attempts_total[5m]) > 10
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "Suspicious login activity detected"
+          description: "{{ $value }} suspicious login attempts in the last 5 minutes"
